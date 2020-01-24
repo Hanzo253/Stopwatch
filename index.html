@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato">
+    <title>Stopwatch</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+      
+      body {
+	  background: black;
+	  color: lawngreen;
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center;
+	  height: 100vh;
+      }
+
+      .stopwatch {
+	  font-size: 15em;
+	  font-family: Lato;
+      }
+
+      ul {
+	  margin: 0;
+	  padding: 0;
+      }
+
+      ul li {
+	  list-style: none;
+	  padding: 10px 0;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <button type="button" id="start-stop" class="btn btn-success btn-block" onclick="startStop()">Start</button>
+      <!-- <button onclick="stop()">Stop</button> -->
+      <button type="button" class="btn btn-primary btn-block" onclick="reset()">Reset</button>
+      <button type="button" class="btn btn-warning btn-block" onclick="lap()">Lap</button>
+      <button type="button" class="btn btn-info btn-block" onclick="restartLaps()">Restart Laps</button>
+    </div>
+    <div id="display" class="stopwatch">00:00:00:00</div>
+    <ul class="laps"></ul>
+    <script>
+      // vars for time values
+      var milliseconds = 0;
+      var seconds = 0;
+      var minutes = 0;
+      var hours = 0;
+
+      // vars for the display value
+      let displayMilliseconds = 0;
+      let displaySeconds = 0;
+      let displayMinutes = 0;
+      let displayHours = 0;
+
+      // var for setInterval() function
+      let interval = null;
+
+      // var for stopwatch
+      var stopwatch = document.querySelector(".stopwatch");
+
+      // var for laps
+      var laps = document.querySelector(".laps");
+      
+      // var for the status of stopwatch
+      let status = "stopped";
+
+      // function for the start and stop button
+      function startStop() {
+	  if (status === "stopped") {
+	      interval = window.setInterval(run, 10);
+	      
+	      document.getElementById("start-stop").innerHTML = "Stop";
+	      $("#start-stop").removeClass("btn btn-success btn-block").addClass("btn btn-danger btn-block");
+	      status = "started";
+	  }
+
+	  else {
+	      window.clearInterval(interval);
+	      document.getElementById("start-stop").innerHTML = "Start";
+	      $("#start-stop").removeClass("btn btn-danger btn-block").addClass("btn btn-success btn-block");
+	      status = "stopped";
+	  }
+      }
+
+      // function that runs the stopwatch
+      function run() {
+	  // adds a leading 0 to single digit time values
+	  if (milliseconds < 10) {
+	      displayMilliseconds = "0" + milliseconds.toString();
+	  }
+
+	  else {
+	      displayMilliseconds = milliseconds;
+	  }
+	  
+	  if (seconds < 10) {
+	      displaySeconds = "0" + seconds.toString();
+	  }
+
+	  else {
+	      displaySeconds = seconds;
+	  }
+
+	  if (minutes < 10) {
+	      displayMinutes = "0" + minutes.toString();
+	  }
+
+	  else {
+	      displayMinutes = minutes;
+	  }
+
+	  if (hours < 10) {
+	      displayHours = "0" + hours.toString();
+	  }
+
+	  else {
+	      displayHours = hours;
+	  }
+	  
+	  // display the updated time values
+	  stopwatch.textContent = displayHours + ":" + displayMinutes + ":" + displaySeconds + ":" + displayMilliseconds;
+	  milliseconds++;
+
+	  // determines when to increment the next time value
+	  if (milliseconds == 100) {
+	      milliseconds = 0;
+	      seconds++;
+	  }
+	  
+	  if (seconds == 60) {
+	      seconds = 0;
+	      minutes++;
+	  }
+
+	  if (minutes == 60) {
+	      minutes = 0;
+	      hours++;
+	  }
+      }
+      
+      // function to reset the stopwatch 
+      function reset() {
+	  window.clearInterval(interval);
+	  hours = 0;
+	  minutes = 0;
+	  seconds = 0;
+	  milliseconds = 0;
+	  stopwatch.textContent = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds)  + ":" + (milliseconds < 10 ? "0" + milliseconds : milliseconds);
+	  document.getElementById("start-stop").innerHTML = "Start";
+	  $("#start-stop").removeClass("btn btn-danger btn-block").addClass("btn btn-success btn-block");
+	  status = "stopped";
+      }
+
+      // laps function
+      function lap() {
+	  if (interval) {
+	      var li = document.createElement("li");
+	      li.innerText = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds)  + ":" + (milliseconds < 10 ? "0" + milliseconds : milliseconds);
+	      laps.appendChild(li);
+	  }
+      }
+
+      // function for restarting laps
+      function restartLaps() {
+	  laps.innerHTML = "";
+      }
+    </script>
+  </body>
+</html>
